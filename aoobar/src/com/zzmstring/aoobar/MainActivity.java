@@ -9,7 +9,10 @@ import android.widget.TextView;
 
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
+import com.zzmstring.aoobar.DB.SqlBrite;
 import com.zzmstring.aoobar.view.PagerSlidingTabStrip.PagerSlidingTabStrip;
+
+import java.util.Observable;
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener {
     @ViewInject(R.id.tabs)
@@ -30,6 +33,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         ViewUtils.inject(this);
     }
     protected void initData(){
+
 
     }
     protected void initListener(){
