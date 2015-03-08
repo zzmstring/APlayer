@@ -16,8 +16,15 @@ import android.widget.TextView;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.zzmstring.aoobar.DB.SqlBrite;
+import com.zzmstring.aoobar.adapter.FragmentAdapter;
+import com.zzmstring.aoobar.base.BaseFragment;
+import com.zzmstring.aoobar.fragment.SimpleFragment;
+import com.zzmstring.aoobar.support.hawk.Hawk;
+import com.zzmstring.aoobar.utils.ListUtils;
 import com.zzmstring.aoobar.view.PagerSlidingTabStrip.PagerSlidingTabStrip;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener {
@@ -40,6 +47,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     @ViewInject(R.id.activity_main_ib_next)
     ImageButton activity_main_ib_next;
     private AlertDialog dialog;
+    private boolean isOpen=false;
+    private List<String> chanelList;
+    private List<BaseFragment> baseFragmentList;
+    private FragmentAdapter fragmentAdapter;
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,9 +61,35 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     protected void initView(){
         setContentView(R.layout.activity_main);
         ViewUtils.inject(this);
+        chanelList=new ArrayList<>();
+        baseFragmentList=new ArrayList<BaseFragment>();
+        Hawk.init(this,"heihei");
+        isOpen=Hawk.get("isOpen",false);
+        if(!isOpen){
+            String title="defaule";
+            SimpleFragment simpleFragment=new SimpleFragment();
+            simpleFragment.setTitle(title);
+            baseFragmentList.add(simpleFragment);
+            chanelList.add(title);
+            Hawk.put("list",chanelList);
+            Hawk.put("isOpen",true);
+        }else {
+            List<String> tempList=Hawk.get("list");
+            if(!ListUtils.isEmpty(tempList)){
+                for(String s:tempList){
+                    chanelList.add(s);
+                    SimpleFragment simpleFragment=new SimpleFragment();
+                    simpleFragment.setTitle(s);
+                    baseFragmentList.add(simpleFragment);
+                }
+            }
+
+        }
     }
     protected void initData(){
-
+        fragmentAdapter=new FragmentAdapter(getSupportFragmentManager(),baseFragmentList);
+        view_pager.setAdapter(fragmentAdapter);
+        tabs.setViewPager(view_pager);
 
     }
     protected void initListener(){
@@ -88,6 +125,17 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 String content=et_edit.getText().toString().trim();
                 if(!TextUtils.isEmpty(content)){
 
+                    SimpleFragment simpleFragment=new SimpleFragment();
+                    simpleFragment.setTitle(content);
+                    baseFragmentList.add(simpleFragment);
+                    tabs.notifyDataSetChanged();
+                    fragmentAdapter.notifyDataSetChanged();
+                    if(!chanelList.contains(content)){
+                        chanelList.add(content);
+                        Hawk.put("list",chanelList);
+                    }
+//                    tabs.notifyDataSetChanged();
+                    dialog.dismiss();
                 }
             }
         });

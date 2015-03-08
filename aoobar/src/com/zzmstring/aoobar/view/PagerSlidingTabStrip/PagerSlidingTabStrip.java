@@ -226,7 +226,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
 	}
 
-	private void addTextTab(final int position, String title) {
+	public void addTextTab(final int position, String title) {
 
 		TextView tab = new TextView(getContext());
 		tab.setText(title);

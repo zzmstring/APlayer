@@ -3,6 +3,13 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <Button
+        android:id="@+id/bt_addmp3"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:text="add mp3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
     <ListView
         android:dividerHeight="3dp"
         android:id="@+id/lv_main"

@@ -39,4 +39,5 @@ public abstract class BaseFragment extends Fragment {
 	public abstract void initListener();
 
 	public abstract void initData();
+    public abstract String getTitle();
 }
