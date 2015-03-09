@@ -1,7 +1,7 @@
 package com.zzmstring.aoobar;
 
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
@@ -15,17 +15,20 @@ import android.widget.TextView;
 
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
-import com.zzmstring.aoobar.DB.SqlBrite;
 import com.zzmstring.aoobar.adapter.FragmentAdapter;
 import com.zzmstring.aoobar.base.BaseFragment;
 import com.zzmstring.aoobar.fragment.SimpleFragment;
+import com.zzmstring.aoobar.openfiledemo.CallbackBundle;
+import com.zzmstring.aoobar.openfiledemo.OpenFileDialog;
 import com.zzmstring.aoobar.support.hawk.Hawk;
+import com.zzmstring.aoobar.utils.ExLog;
 import com.zzmstring.aoobar.utils.ListUtils;
 import com.zzmstring.aoobar.view.PagerSlidingTabStrip.PagerSlidingTabStrip;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Observable;
+import java.util.Map;
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener {
     @ViewInject(R.id.tabs)
@@ -51,6 +54,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private List<String> chanelList;
     private List<BaseFragment> baseFragmentList;
     private FragmentAdapter fragmentAdapter;
+    static private int openfileDialogId = 0;
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -102,7 +106,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.iv_addfragment:
-                showAddTitle();
+//                showAddTitle();
+                showDialog(openfileDialogId);
                 break;
             case R.id.activity_main_ib_next:
                 break;
@@ -148,5 +153,29 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         dialog = builder.create();
         dialog.setView(v2, 0, 0, 0, 0);
         dialog.show();
+    }
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        if(id==openfileDialogId){
+            Map<String, Integer> images = new HashMap<String, Integer>();
+            // 下面几句设置各文件类型的图标， 需要你先把图标添加到资源文件夹
+            images.put(OpenFileDialog.sRoot, R.drawable.filedialog_root);	// 根目录图标
+            images.put(OpenFileDialog.sParent, R.drawable.filedialog_folder_up);	//返回上一层的图标
+            images.put(OpenFileDialog.sFolder, R.drawable.filedialog_folder);	//文件夹图标
+            images.put("mp3", R.drawable.filedialog_wavfile);	//wav文件图标
+            images.put(OpenFileDialog.sEmpty, R.drawable.filedialog_root);
+            Dialog dialog = OpenFileDialog.createDialog(id, this, "打开文件", new CallbackBundle() {
+                        @Override
+                        public void callback(Bundle bundle) {
+                            String filepath = bundle.getString("path");
+//                            setTitle(filepath); // 把文件路径显示在标题上
+                            ExLog.l("selected file is >>>>>"+filepath);
+                        }
+                    },
+                    ".mp3;",
+                    images);
+            return dialog;
+        }
+        return null;
     }
 }
