@@ -61,7 +61,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     protected void initView(){
         setContentView(R.layout.activity_main);
         ViewUtils.inject(this);
-        chanelList=new ArrayList<>();
+        chanelList=new ArrayList<String>();
         baseFragmentList=new ArrayList<BaseFragment>();
         Hawk.init(this,"heihei");
         isOpen=Hawk.get("isOpen",false);
