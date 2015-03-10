@@ -75,9 +75,9 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 	private Paint rectPaint;
 	private Paint dividerPaint;
 
-	private int indicatorColor = 0xFF666666;
-	private int underlineColor = 0x1A000000;
-	private int dividerColor = 0x1A000000;
+	private int indicatorColor = 0xFF6600cc;
+	private int underlineColor = 0x1A666666;
+	private int dividerColor = 0x1A6600cc;
 
 	private boolean shouldExpand = false;
 	private boolean textAllCaps = true;
@@ -92,7 +92,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 	private int tabTextSize = 12;
 	private int tabTextColor = 0xFF666666;
 	private Typeface tabTypeface = null;
-	private int tabTypefaceStyle = Typeface.BOLD;
+	private int tabTypefaceStyle = Typeface.ITALIC;
 
 	private int lastScrollX = 0;
 

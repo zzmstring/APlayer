@@ -2,33 +2,39 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res/com.zzmstring.aoobar"
     android:layout_width="match_parent"
+    android:background="#002b36"
     android:layout_height="match_parent"
-    tools:context="com.zzmstring.aoobar.MainActivity">
+    >
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <RelativeLayout
-            android:background="#000000"
+            android:background="#303030"
             android:layout_width="match_parent"
-            android:layout_height="35dp">
+            android:layout_height="43dp">
             <ImageView
                 android:layout_alignParentLeft="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <TextView
+                android:layout_marginLeft="115dp"
                 android:textColor="#ffffff"
-                android:textSize="23sp"
-                android:layout_centerInParent="true"
-                android:text="Aoobar"
+                android:textSize="25sp"
+                android:layout_centerVertical="true"
+                android:text="aoobar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <ImageView
+                android:layout_marginRight="3dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/more1"
                 android:layout_alignParentRight="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             </RelativeLayout>
         <LinearLayout
+            android:background="#33b5e5"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -36,23 +42,29 @@
                 android:layout_weight="1"
                 android:id="@+id/tabs"
                 app:pstsShouldExpand="true"
-                app:pstsIndicatorColor="@color/gray_light"
-                android:textColor="@color/black"
+                app:pstsIndicatorColor="#33b5e5"
+                app:pstsDividerColor="#424242"
+                android:textColor="#ffffff"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
-                android:background="#ebebeb" />
+                android:background="#1a1a1a" />
+            <View
+                android:background="#424242"
+                android:layout_gravity="center"
+                android:layout_width="1dp"
+                android:layout_height="20dp"/>
             <ImageView
-                android:layout_marginRight="5dp"
+
                 android:id="@+id/iv_addfragment"
-                android:background="#ebebeb"
+                android:background="#1a1a1a"
                 android:layout_alignParentRight="true"
-                android:src="@drawable/main_arrow_down"
+                android:src="@drawable/arrowdown"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="40dp" />
         </LinearLayout>
         <android.support.v4.view.ViewPager
             android:id="@+id/view_pager"
-            android:background="#ffffff"
+            android:background="#002b36"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
         </android.support.v4.view.ViewPager>

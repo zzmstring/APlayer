@@ -191,7 +191,7 @@ public class OpenFileDialog {
 				File fl = new File(pt);
 				if(fl.isFile()){
 					// 如果是文件
-					((Activity)getContext()).dismissDialog(this.dialogid); // 让文件夹对话框消失
+//					((Activity)getContext()).dismissDialog(this.dialogid); // 让文件夹对话框消失
 					
 					// 设置回调的返回值
 					Bundle bundle = new Bundle();
