@@ -2,6 +2,9 @@ package com.zzmstring.aoobar;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
@@ -15,6 +18,9 @@ import android.widget.TextView;
 
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
+import com.zzmstring.aoobar.DB.DBHelper;
+import com.zzmstring.aoobar.DB.Dao;
+import com.zzmstring.aoobar.DB.SqlBrite;
 import com.zzmstring.aoobar.adapter.FragmentAdapter;
 import com.zzmstring.aoobar.base.BaseFragment;
 import com.zzmstring.aoobar.fragment.SimpleFragment;
@@ -29,6 +35,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import rx.Observable;
+import rx.functions.Action1;
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener {
     @ViewInject(R.id.tabs)
@@ -50,64 +59,104 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     @ViewInject(R.id.activity_main_ib_next)
     ImageButton activity_main_ib_next;
     private AlertDialog dialog;
-    private boolean isOpen=false;
+    private boolean isOpen = false;
+    private boolean isFirst = true;
     private List<String> chanelList;
     private List<BaseFragment> baseFragmentList;
     private FragmentAdapter fragmentAdapter;
     static private int openfileDialogId = 0;
+    private SQLiteDatabase database;
+    private SqlBrite db;
+
     @Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         initView();
         initListener();
         initData();
-	}
-    protected void initView(){
+    }
+
+    protected void initView() {
         setContentView(R.layout.activity_main);
         ViewUtils.inject(this);
-        chanelList=new ArrayList<String>();
-        baseFragmentList=new ArrayList<BaseFragment>();
-        Hawk.init(this,"heihei");
-        isOpen=Hawk.get("isOpen",false);
-        if(!isOpen){
-            String title="defaule";
-            SimpleFragment simpleFragment=new SimpleFragment();
-            simpleFragment.setTitle(title);
-            baseFragmentList.add(simpleFragment);
-            chanelList.add(title);
-            Hawk.put("list",chanelList);
-            Hawk.put("isOpen",true);
-        }else {
-            List<String> tempList=Hawk.get("list");
-            if(!ListUtils.isEmpty(tempList)){
-                for(String s:tempList){
-                    chanelList.add(s);
-                    SimpleFragment simpleFragment=new SimpleFragment();
-                    simpleFragment.setTitle(s);
-                    baseFragmentList.add(simpleFragment);
-                }
-            }
+        chanelList = new ArrayList<String>();
+        baseFragmentList = new ArrayList<BaseFragment>();
+        database = Dao.getInstance(this).getConnection();
+        db = SqlBrite.create(new DBHelper(this));
+
+        Hawk.init(this, "heihei");
+        isOpen = Hawk.get("isOpen", false);
+        if (!isOpen) {
+            String title = "defaule";
+            db.insert("list", createList(title));
+            database.execSQL("create table " + title + "(_id integer PRIMARY KEY AUTOINCREMENT, "
+                    + "music char)");
+//            SimpleFragment simpleFragment=new SimpleFragment();
+//            simpleFragment.setTitle(title);
+//            baseFragmentList.add(simpleFragment);
+//            chanelList.add(title);
+//            Hawk.put("list",chanelList);
+            Hawk.put("isOpen", true);
+        } else {
+//            List<String> tempList=Hawk.get("list");
+//            if(!ListUtils.isEmpty(tempList)){
+//                for(String s:tempList){
+//                    chanelList.add(s);
+//                    SimpleFragment simpleFragment=new SimpleFragment();
+//                    simpleFragment.setTitle(s);
+//                    baseFragmentList.add(simpleFragment);
+//                }
+//            }
 
         }
     }
-    protected void initData(){
-        fragmentAdapter=new FragmentAdapter(getSupportFragmentManager(),baseFragmentList);
+
+    protected void initData() {
+        Observable<SqlBrite.Query> lists = db.createQuery("list", "SELECT * FROM list");
+        lists.subscribe(new Action1<SqlBrite.Query>() {
+            @Override
+            public void call(SqlBrite.Query query) {
+                Cursor cursor = query.run();
+                int count = cursor.getColumnCount();
+                int rawCount = cursor.getCount();
+                ExLog.l("rawCount >>" + rawCount);
+                if (isFirst) {
+                    while (cursor.moveToNext()) {
+                        String str = cursor.getString(1);
+                        SimpleFragment simpleFragment = new SimpleFragment();
+                        simpleFragment.setTitle(str);
+                        baseFragmentList.add(simpleFragment);
+                    }
+                    isFirst=false;
+                } else {
+                    cursor.moveToLast();
+                    String str = cursor.getString(1);
+                    SimpleFragment simpleFragment = new SimpleFragment();
+                    simpleFragment.setTitle(str);
+                    baseFragmentList.add(simpleFragment);
+                }
+            }
+        });
+        fragmentAdapter = new FragmentAdapter(getSupportFragmentManager(), baseFragmentList);
         view_pager.setAdapter(fragmentAdapter);
         tabs.setViewPager(view_pager);
 
     }
-    protected void initListener(){
+
+    protected void initListener() {
         iv_addfragment.setOnClickListener(this);
         activity_main_ib_previous.setOnClickListener(this);
         activity_main_ib_play.setOnClickListener(this);
         activity_main_ib_next.setOnClickListener(this);
     }
+
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.iv_addfragment:
-//                showAddTitle();
-                showDialog(openfileDialogId);
+                showAddTitle();
+//                showDialog(openfileDialogId);
+
                 break;
             case R.id.activity_main_ib_next:
                 break;
@@ -118,27 +167,31 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         }
     }
-    private void showAddTitle(){
+
+    private void showAddTitle() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View v2 = View.inflate(this, R.layout.pupop_edit, null);
         Button ok = (Button) v2.findViewById(R.id.bt_ok);
         Button cancel = (Button) v2.findViewById(R.id.bt_cancel);
-        final EditText et_edit=(EditText)v2.findViewById(R.id.et_edit);
+        final EditText et_edit = (EditText) v2.findViewById(R.id.et_edit);
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String content=et_edit.getText().toString().trim();
-                if(!TextUtils.isEmpty(content)){
-
-                    SimpleFragment simpleFragment=new SimpleFragment();
-                    simpleFragment.setTitle(content);
-                    baseFragmentList.add(simpleFragment);
+                String content = et_edit.getText().toString().trim();
+                if (!TextUtils.isEmpty(content)) {
+//                    SqlBrite db=SqlBrite.create(database);
+                    db.insert("list", createList(content));
                     tabs.notifyDataSetChanged();
                     fragmentAdapter.notifyDataSetChanged();
-                    if(!chanelList.contains(content)){
-                        chanelList.add(content);
-                        Hawk.put("list",chanelList);
-                    }
+//                    SimpleFragment simpleFragment=new SimpleFragment();
+//                    simpleFragment.setTitle(content);
+//                    baseFragmentList.add(simpleFragment);
+//                    tabs.notifyDataSetChanged();
+//                    fragmentAdapter.notifyDataSetChanged();
+//                    if(!chanelList.contains(content)){
+//                        chanelList.add(content);
+//                        Hawk.put("list",chanelList);
+//                    }
 //                    tabs.notifyDataSetChanged();
                     dialog.dismiss();
                 }
@@ -154,22 +207,23 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         dialog.setView(v2, 0, 0, 0, 0);
         dialog.show();
     }
+
     @Override
     protected Dialog onCreateDialog(int id) {
-        if(id==openfileDialogId){
+        if (id == openfileDialogId) {
             Map<String, Integer> images = new HashMap<String, Integer>();
             // 下面几句设置各文件类型的图标， 需要你先把图标添加到资源文件夹
-            images.put(OpenFileDialog.sRoot, R.drawable.filedialog_root);	// 根目录图标
-            images.put(OpenFileDialog.sParent, R.drawable.filedialog_folder_up);	//返回上一层的图标
-            images.put(OpenFileDialog.sFolder, R.drawable.filedialog_folder);	//文件夹图标
-            images.put("mp3", R.drawable.filedialog_wavfile);	//wav文件图标
+            images.put(OpenFileDialog.sRoot, R.drawable.filedialog_root);    // 根目录图标
+            images.put(OpenFileDialog.sParent, R.drawable.filedialog_folder_up);    //返回上一层的图标
+            images.put(OpenFileDialog.sFolder, R.drawable.filedialog_folder);    //文件夹图标
+            images.put("mp3", R.drawable.filedialog_wavfile);    //wav文件图标
             images.put(OpenFileDialog.sEmpty, R.drawable.filedialog_root);
             Dialog dialog = OpenFileDialog.createDialog(id, this, "打开文件", new CallbackBundle() {
                         @Override
                         public void callback(Bundle bundle) {
                             String filepath = bundle.getString("path");
 //                            setTitle(filepath); // 把文件路径显示在标题上
-                            ExLog.l("selected file is >>>>>"+filepath);
+                            ExLog.l("selected file is >>>>>" + filepath);
                         }
                     },
                     ".mp3;",
@@ -177,5 +231,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             return dialog;
         }
         return null;
+    }
+
+    private ContentValues createList(String str) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("name", str);
+        return contentValues;
     }
 }
