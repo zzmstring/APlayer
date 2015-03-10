@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <RelativeLayout
+            android:id="@+id/title_bar"
             android:background="#303030"
             android:layout_width="match_parent"
             android:layout_height="43dp">
@@ -26,6 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <ImageView
+                android:id="@+id/iv_more"
                 android:layout_marginRight="3dp"
                 android:layout_centerVertical="true"
                 android:src="@drawable/more1"
@@ -34,7 +36,7 @@
                 android:layout_height="wrap_content" />
             </RelativeLayout>
         <LinearLayout
-            android:background="#33b5e5"
+            android:background="#1a1a1a"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -44,6 +46,7 @@
                 app:pstsShouldExpand="true"
                 app:pstsIndicatorColor="#33b5e5"
                 app:pstsDividerColor="#424242"
+                app:pstsUnderlineColor="#1a1a1a"
                 android:textColor="#ffffff"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
@@ -52,7 +55,7 @@
                 android:background="#424242"
                 android:layout_gravity="center"
                 android:layout_width="1dp"
-                android:layout_height="20dp"/>
+                android:layout_height="43dp"/>
             <ImageView
 
                 android:id="@+id/iv_addfragment"
@@ -60,7 +63,7 @@
                 android:layout_alignParentRight="true"
                 android:src="@drawable/arrowdown"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp" />
+                android:layout_height="43dp" />
         </LinearLayout>
         <android.support.v4.view.ViewPager
             android:id="@+id/view_pager"
@@ -156,5 +159,43 @@
         android:layout_width="match_parent"
         android:layout_height="30dp">
 
+        </LinearLayout>
+    <LinearLayout
+        android:visibility="invisible"
+        android:background="#303030"
+        android:id="@+id/ll_menu"
+        android:layout_marginTop="43dp"
+        android:layout_alignParentRight="true"
+        android:weightSum="3"
+        android:orientation="vertical"
+        android:layout_width="150dp"
+        android:layout_height="150dp">
+        <TextView
+            android:textSize="18sp"
+            android:gravity="center"
+            android:textColor="#ffffff"
+            android:id="@+id/tv_addlist"
+            android:text="添加列表"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+        <TextView
+            android:textSize="18sp"
+            android:textColor="#ffffff"
+            android:gravity="center"
+            android:id="@+id/tv_addmps"
+            android:text="添加歌曲"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+        <TextView
+            android:id="@+id/tv_deletelist"
+            android:textSize="18sp"
+            android:textColor="#ff0033"
+            android:gravity="center"
+            android:text="删除列表"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
         </LinearLayout>
 </RelativeLayout>

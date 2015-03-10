@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:background="#303030"
+    android:layout_width="match_parent"
     android:layout_height="200dp">
     <EditText
+        android:textColor="#ffffff"
         android:digits="0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         android:id="@+id/et_edit"
         android:layout_width="match_parent"
@@ -13,14 +16,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <Button
+            android:textColor="#ffffff"
             android:id="@+id/bt_ok"
-            android:text="确定"
+            android:text="确  定"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content" />
         <Button
+            android:textColor="#ffffff"
             android:id="@+id/bt_cancel"
-            android:text="取消"
+            android:text="取  消"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content" />

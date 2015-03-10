@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.lidroid.xutils.ViewUtils;
@@ -58,6 +59,17 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     ImageButton activity_main_ib_play;
     @ViewInject(R.id.activity_main_ib_next)
     ImageButton activity_main_ib_next;
+    @ViewInject(R.id.iv_more)
+    ImageView mMore;
+    @ViewInject(R.id.tv_addlist)
+    TextView tv_addlist;
+    @ViewInject(R.id.tv_deletelist)
+    TextView tv_deletelist;
+    @ViewInject(R.id.tv_addmps)
+    TextView tv_addmps;
+    @ViewInject(R.id.ll_menu)
+    LinearLayout ll_menu;
+    private boolean isMenuShow=false;
     private AlertDialog dialog;
     private boolean isOpen = false;
     private boolean isFirst = true;
@@ -121,7 +133,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                         simpleFragment.setTitle(str);
                         baseFragmentList.add(simpleFragment);
                     }
-                    isFirst=false;
+                    isFirst = false;
                 } else {
                     cursor.moveToLast();
                     String str = cursor.getString(1);
@@ -142,19 +154,36 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         activity_main_ib_previous.setOnClickListener(this);
         activity_main_ib_play.setOnClickListener(this);
         activity_main_ib_next.setOnClickListener(this);
+        mMore.setOnClickListener(this);
+        tv_addlist.setOnClickListener(this);
+        tv_addmps.setOnClickListener(this);
+        tv_deletelist.setOnClickListener(this);
+
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_addfragment:
-                showAddTitle();
+//                showAddTitle();
                 break;
             case R.id.activity_main_ib_next:
                 break;
             case R.id.activity_main_ib_play:
                 break;
             case R.id.activity_main_ib_previous:
+                break;
+            case R.id.iv_more:
+                showMenu();
+                break;
+            case R.id.tv_addmps:
+                addMps();
+                break;
+            case R.id.tv_addlist:
+                addList();
+                break;
+            case R.id.tv_deletelist:
+                deleteList();
                 break;
 
         }
@@ -250,5 +279,44 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 images);
         dialog.show();
         }
+    private void showMenu(){
+        if(!isMenuShow){
+            ll_menu.setVisibility(View.VISIBLE);
+            isMenuShow=true;
+        }else {
+            ll_menu.setVisibility(View.INVISIBLE);
+            isMenuShow=false;
+        }
+    }
+    private void addMps(){
+        if(isMshow()){
+            ll_menu.setVisibility(View.INVISIBLE);
+            isMenuShow=false;
+        }
+    }
+    private void addList(){
+        showAddTitle();
+        if(isMshow()){
+            ll_menu.setVisibility(View.INVISIBLE);
+            isMenuShow=false;
+        }
+    }
+    private void deleteList(){
+        if(isMshow()){
+            ll_menu.setVisibility(View.INVISIBLE);
+            isMenuShow=false;
+        }
+    }
+    private boolean isMshow(){
+        return ll_menu.getVisibility()==View.VISIBLE?true:false;
+    }
 
+    @Override
+    public void onUserInteraction() {
+//        if(isMshow()){
+//            ll_menu.setVisibility(View.INVISIBLE);
+//            isMenuShow=false;
+//        }
+//        super.onUserInteraction();
+    }
 }
