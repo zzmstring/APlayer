@@ -103,6 +103,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             database.execSQL("create table " + title + "(_id integer PRIMARY KEY AUTOINCREMENT, "
                     + "music char)");
             Hawk.put("isOpen", true);
+
+
+
+
         } else {
 //            List<String> tempList=Hawk.get("list");
 //            if(!ListUtils.isEmpty(tempList)){
