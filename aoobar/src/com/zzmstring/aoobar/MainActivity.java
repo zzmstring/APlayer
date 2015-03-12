@@ -24,6 +24,7 @@ import com.zzmstring.aoobar.DB.Dao;
 import com.zzmstring.aoobar.DB.SqlBrite;
 import com.zzmstring.aoobar.adapter.FragmentAdapter;
 import com.zzmstring.aoobar.base.BaseFragment;
+import com.zzmstring.aoobar.bean.MusicInfo;
 import com.zzmstring.aoobar.fragment.SimpleFragment;
 import com.zzmstring.aoobar.openfiledemo.CallbackBundle;
 import com.zzmstring.aoobar.openfiledemo.OpenFileDialog;
@@ -94,6 +95,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         chanelList = new ArrayList<String>();
         baseFragmentList = new ArrayList<BaseFragment>();
         database = Dao.getInstance(this).getConnection();
+
         db = SqlBrite.create(new DBHelper(this));
         Hawk.init(this, "heihei");
         isOpen = Hawk.get("isOpen", false);
@@ -133,16 +135,16 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 if (isFirst) {
                     while (cursor.moveToNext()) {
                         String str = cursor.getString(1);
-                        SimpleFragment simpleFragment = new SimpleFragment();
-                        simpleFragment.setTitle(str);
+                        SimpleFragment simpleFragment = new SimpleFragment(MainActivity.this,str);
+
                         baseFragmentList.add(simpleFragment);
                     }
                     isFirst = false;
                 } else {
                     cursor.moveToLast();
                     String str = cursor.getString(1);
-                    SimpleFragment simpleFragment = new SimpleFragment();
-                    simpleFragment.setTitle(str);
+                    SimpleFragment simpleFragment = new SimpleFragment(MainActivity.this,str);
+
                     baseFragmentList.add(simpleFragment);
                 }
             }
@@ -205,6 +207,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 String content = et_edit.getText().toString().trim();
                 if (!TextUtils.isEmpty(content)) {
 //                    SqlBrite db=SqlBrite.create(database);
+                    database.execSQL("create table "+content+"(_id integer PRIMARY KEY AUTOINCREMENT, path char, "
+                                    + "file char, time integer)");
                     db.insert("list", createList(content));
                     tabs.notifyDataSetChanged();
                     fragmentAdapter.notifyDataSetChanged();
@@ -297,6 +301,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             ll_menu.setVisibility(View.INVISIBLE);
             isMenuShow=false;
         }
+
     }
     private void addList(){
         showAddTitle();
@@ -322,5 +327,21 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 //            isMenuShow=false;
 //        }
 //        super.onUserInteraction();
+    }
+    private void insertMps(String table,List<MusicInfo> list){
+        if(!ListUtils.isEmpty(list)){
+            for(MusicInfo info:list){
+                db.insert(table,createMusic(info));
+            }
+        }else {
+
+        }
+    }
+    private ContentValues createMusic(MusicInfo info){
+        ContentValues contentValues=new ContentValues();
+        contentValues.put("path",info.getPath());
+        contentValues.put("file",info.getFile());
+        contentValues.put("time",info.getTime());
+        return contentValues;
     }
 }
