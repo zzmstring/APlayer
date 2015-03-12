@@ -102,13 +102,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         if (!isOpen) {
             String title = "defaule";
             db.insert("list", createList(title));
-            database.execSQL("create table " + title + "(_id integer PRIMARY KEY AUTOINCREMENT, "
-                    + "music char)");
+            database.execSQL("create table "+title+"(_id integer PRIMARY KEY AUTOINCREMENT, path char, "
+                    + "file char, time integer)");
             Hawk.put("isOpen", true);
-
-
-
-
         } else {
 //            List<String> tempList=Hawk.get("list");
 //            if(!ListUtils.isEmpty(tempList)){
@@ -172,6 +168,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         switch (view.getId()) {
             case R.id.iv_addfragment:
 //                showAddTitle();
+
                 break;
             case R.id.activity_main_ib_next:
                 break;
@@ -209,6 +206,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 //                    SqlBrite db=SqlBrite.create(database);
                     database.execSQL("create table "+content+"(_id integer PRIMARY KEY AUTOINCREMENT, path char, "
                                     + "file char, time integer)");
+                    ExLog.l("创建了数据库");
                     db.insert("list", createList(content));
                     tabs.notifyDataSetChanged();
                     fragmentAdapter.notifyDataSetChanged();
@@ -301,7 +299,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             ll_menu.setVisibility(View.INVISIBLE);
             isMenuShow=false;
         }
-
+        String currenttabstring=tabs.getCurrent(view_pager.getCurrentItem());
+        ExLog.l("当前的页面是>"+currenttabstring);
     }
     private void addList(){
         showAddTitle();

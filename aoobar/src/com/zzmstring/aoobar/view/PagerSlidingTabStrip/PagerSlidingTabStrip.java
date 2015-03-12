@@ -576,5 +576,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 			}
 		};
 	}
-
+    public String getCurrent(int i ){
+        return pager.getAdapter().getPageTitle(i).toString();
+    }
 }

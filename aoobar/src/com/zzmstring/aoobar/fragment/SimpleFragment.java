@@ -11,6 +11,7 @@ import android.widget.ListView;
 
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
+import com.zzmstring.aoobar.DB.Dao;
 import com.zzmstring.aoobar.R;
 import com.zzmstring.aoobar.adapter.ListAdapter;
 import com.zzmstring.aoobar.base.BaseFragment;
@@ -29,7 +30,8 @@ public class SimpleFragment extends BaseFragment implements View.OnClickListener
     public SimpleFragment(Context context,String title){
         this.context=context;
         this.title=title;
-        this.cursor=database.rawQuery("select * from" + title, null);
+        database = Dao.getInstance(context).getConnection();
+        this.cursor=database.rawQuery("select * from " + title, null);
     }
     @ViewInject(R.id.lv_main)
     ListView lv_main;

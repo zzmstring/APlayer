@@ -21,7 +21,7 @@ public class ListAdapter extends CursorAdapter {
     private SqlBrite db;
 
 
-    Observable<SqlBrite.Query> lists = db.createQuery("list", "SELECT * FROM list");
+//    Observable<SqlBrite.Query> lists = db.createQuery("list", "SELECT * FROM list");
     public ListAdapter(Context context, Cursor c) {
         super(context, c);
 
