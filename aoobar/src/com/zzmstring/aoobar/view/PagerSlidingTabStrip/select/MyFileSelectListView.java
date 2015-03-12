@@ -41,7 +41,8 @@ public class MyFileSelectListView extends ListView implements AdapterView.OnItem
         this.suffix = suffix==null?"":suffix.toLowerCase();
         this.callback = callback;
         this.dialogid = dialogid;
-
+        this.setOnItemClickListener(this);
+        refreshFileList();
 
     }
     public MyFileSelectListView(Context context) {
@@ -137,13 +138,10 @@ public class MyFileSelectListView extends ListView implements AdapterView.OnItem
                 }
             }
         }
-
         list.addAll(lfolders); // 先添加文件夹，确保文件夹显示在上面
         list.addAll(lfiles);	//再添加文件
-
-
-//        SimpleAdapter adapter = new SimpleAdapter(getContext(), list, R.layout.filedialogitem, new String[]{"img", "name", "path"}, new int[]{R.id.filedialogitem_img, R.id.filedialogitem_name, R.id.filedialogitem_path});
-//        this.setAdapter(adapter);
+        SimpleAdapter adapter = new SimpleAdapter(getContext(), list, R.layout.filedialogitem, new String[]{"img", "name", "path"}, new int[]{R.id.filedialogitem_img, R.id.filedialogitem_name, R.id.filedialogitem_path});
+        this.setAdapter(adapter);
         return files.length;
     }
     @Override

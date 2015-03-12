@@ -3,6 +3,7 @@ package com.zzmstring.aoobar.UI;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.SimpleAdapter;
 
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
@@ -21,7 +22,9 @@ import java.util.Map;
  */
 public class SelectFilesAty extends BaseActivity implements CallbackBundle {
     @ViewInject(R.id.ll_main)
-    RelativeLayout ll_main;
+    LinearLayout ll_main;
+    @ViewInject(R.id.ll_second)
+    LinearLayout ll_second;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,8 +41,10 @@ public class SelectFilesAty extends BaseActivity implements CallbackBundle {
         images.put(OpenFileDialog.sFolder, R.drawable.filedialog_folder);	//文件夹图标
         images.put("wav", R.drawable.filedialog_wavfile);	//wav文件图标
         images.put(OpenFileDialog.sEmpty, R.drawable.filedialog_root);
-        MyFileSelectListView myFileSelectListView=new MyFileSelectListView(this,0,this,".mp3",images);
-        ll_main.addView(myFileSelectListView);
+        MyFileSelectListView myFileSelectListView=new MyFileSelectListView(this,0,this,".mp3;",images);
+//        SimpleAdapter adapter = new SimpleAdapter(getContext(), list, R.layout.filedialogitem, new String[]{"img", "name", "path"}, new int[]{R.id.filedialogitem_img, R.id.filedialogitem_name, R.id.filedialogitem_path});
+//        this.setAdapter(adapter);
+        ll_second.addView(myFileSelectListView,0);
 
     }
 

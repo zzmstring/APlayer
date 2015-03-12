@@ -6,18 +6,16 @@
     android:background="#000000"
     android:orientation="horizontal"
     android:padding="4dp" >
-
     <ImageView
         android:id="@+id/filedialogitem_img"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_margin="4dp"/>
- 
    <LinearLayout
+       android:layout_weight="1"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
        android:orientation="vertical" >
-
         <TextView
             android:id="@+id/filedialogitem_name"
             android:layout_width="fill_parent"
@@ -25,7 +23,6 @@
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold" />
-
         <TextView
             android:id="@+id/filedialogitem_path"
             android:layout_width="fill_parent"
@@ -33,7 +30,10 @@
             android:paddingLeft="10dp"
             android:textColor="#FFFFFF"
             android:textSize="14sp" />
-
     </LinearLayout>
-
+    <CheckBox
+        
+        android:layout_gravity="center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </LinearLayout>
