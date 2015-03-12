@@ -3,6 +3,7 @@ package com.zzmstring.aoobar;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import com.lidroid.xutils.view.annotation.ViewInject;
 import com.zzmstring.aoobar.DB.DBHelper;
 import com.zzmstring.aoobar.DB.Dao;
 import com.zzmstring.aoobar.DB.SqlBrite;
+import com.zzmstring.aoobar.UI.SelectFilesAty;
 import com.zzmstring.aoobar.adapter.FragmentAdapter;
 import com.zzmstring.aoobar.base.BaseFragment;
 import com.zzmstring.aoobar.bean.MusicInfo;
@@ -301,6 +303,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         }
         String currenttabstring=tabs.getCurrent(view_pager.getCurrentItem());
         ExLog.l("当前的页面是>"+currenttabstring);
+        Intent intent=new Intent(this, SelectFilesAty.class);
+        startActivity(intent);
+
     }
     private void addList(){
         showAddTitle();
