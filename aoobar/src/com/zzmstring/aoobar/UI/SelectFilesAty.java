@@ -1,6 +1,10 @@
 package com.zzmstring.aoobar.UI;
 
+import android.content.ContentValues;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
@@ -9,12 +13,17 @@ import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
 import com.zzmstring.aoobar.R;
 import com.zzmstring.aoobar.base.BaseActivity;
+import com.zzmstring.aoobar.bean.MusicInfo;
+import com.zzmstring.aoobar.bean.MyMusicInfo;
 import com.zzmstring.aoobar.openfiledemo.CallbackBundle;
 import com.zzmstring.aoobar.openfiledemo.OpenFileDialog;
 import com.zzmstring.aoobar.utils.ExLog;
+import com.zzmstring.aoobar.utils.ListUtils;
 import com.zzmstring.aoobar.view.PagerSlidingTabStrip.select.MyFileSelectListView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,6 +34,9 @@ public class SelectFilesAty extends BaseActivity implements CallbackBundle {
     LinearLayout ll_main;
     @ViewInject(R.id.ll_second)
     LinearLayout ll_second;
+    @ViewInject(R.id.bt_ok)
+    Button bt_ok;
+    private ArrayList<MyMusicInfo> list;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +44,7 @@ public class SelectFilesAty extends BaseActivity implements CallbackBundle {
 
     @Override
     public void initView() {
+        list=new ArrayList<MyMusicInfo>();
         setContentView(R.layout.activity_selectfile);
         ViewUtils.inject(this);
         Map<String, Integer> images = new HashMap<String, Integer>();
@@ -50,7 +63,7 @@ public class SelectFilesAty extends BaseActivity implements CallbackBundle {
 
     @Override
     public void initListener() {
-
+        bt_ok.setOnClickListener(this);
     }
 
     @Override
@@ -64,6 +77,43 @@ public class SelectFilesAty extends BaseActivity implements CallbackBundle {
 //                            setTitle(filepath); // 把文件路径显示在标题上
         String filename=bundle.getString("name");
         ExLog.l("selected file is >>>>>" + filepath+"<filename>"+filename);
+        MyMusicInfo info=new MyMusicInfo();
+        info.path=filepath;
+        info.file=filename;
+        list.add(info);
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.bt_ok:
+                ok();
+                break;
+        }
+    }
+    //    private void insertMps(String table,List<MusicInfo> list){
+//        if(!ListUtils.isEmpty(list)){
+//            for(MusicInfo info:list){
+//                db.insert(table,createMusic(info));
+//            }
+//        }else {
+//
+//        }
+//    }
+//    private ContentValues createMusic(MusicInfo info){
+//        ContentValues contentValues=new ContentValues();
+//        contentValues.put("path",info.getPath());
+//        contentValues.put("file",info.getFile());
+//        contentValues.put("time",info.getTime());
+//        return contentValues;
+//    }
+    private void ok(){
+        if(!ListUtils.isEmpty(list)){
+            Intent intent=new Intent();
+            intent.putParcelableArrayListExtra("list",list);
+            setResult(RESULT_OK,intent);
+            finish();
+        }
     }
 }

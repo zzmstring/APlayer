@@ -24,14 +24,27 @@ public class SimpleFragment extends BaseFragment implements View.OnClickListener
     private Cursor cursor;
     private SQLiteDatabase database;
     private ListAdapter listAdapter;
+    private ListView listView;
+    public void setListView(ListView listView){
+        this.listView=listView;
+    }
+    public ListView getListView(){
+        return this.listView;
+    }
+    public void setListAdapter(ListAdapter listAdapter){
+        this.listAdapter=listAdapter;
+    }
+    public ListAdapter getListAdapter(){
+        return this.listAdapter;
+    }
     public SimpleFragment(){
 
     }
     public SimpleFragment(Context context,String title){
         this.context=context;
         this.title=title;
-        database = Dao.getInstance(context).getConnection();
-        this.cursor=database.rawQuery("select * from " + title, null);
+
+
     }
     @ViewInject(R.id.lv_main)
     ListView lv_main;
@@ -49,12 +62,15 @@ public class SimpleFragment extends BaseFragment implements View.OnClickListener
     public View initView(LayoutInflater inflater) {
         View view=inflater.inflate(R.layout.fragment_simple,null);
         ViewUtils.inject(this,view);
+        setListView(lv_main);
         return view;
     }
     @Override
     public void initListener() {
+        database = Dao.getInstance(context).getConnection();
+        this.cursor=database.rawQuery("select * from " + title, null);
         bt_addmp3.setOnClickListener(this);
-        listAdapter=new ListAdapter(context,cursor);
+        this.listAdapter=new ListAdapter(context,cursor);
         lv_main.setAdapter(listAdapter);
     }
 

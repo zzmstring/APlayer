@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <Button
+        android:visibility="gone"
         android:id="@+id/bt_addmp3"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"

@@ -19,11 +19,14 @@ import rx.Observable;
  */
 public class ListAdapter extends CursorAdapter {
     private SqlBrite db;
+    private Cursor cursor;
 //    Observable<SqlBrite.Query> lists = db.createQuery("list", "SELECT * FROM list");
     public ListAdapter(Context context, Cursor c) {
         super(context, c);
+        this.cursor=c;
         changeCursor(c);
     }
+
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
         ViewHolder holder=new ViewHolder();
@@ -57,5 +60,17 @@ public class ListAdapter extends CursorAdapter {
         TextView tvpath;
         TextView tvfile;
         TextView tvtime;
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+//        this.cursor.requery();
+        super.notifyDataSetChanged();
+
+    }
+
+    @Override
+    public int getCount() {
+        return super.getCount();
     }
 }

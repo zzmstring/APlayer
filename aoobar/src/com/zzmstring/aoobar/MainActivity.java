@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,8 +26,10 @@ import com.zzmstring.aoobar.DB.Dao;
 import com.zzmstring.aoobar.DB.SqlBrite;
 import com.zzmstring.aoobar.UI.SelectFilesAty;
 import com.zzmstring.aoobar.adapter.FragmentAdapter;
+import com.zzmstring.aoobar.adapter.ListAdapter;
 import com.zzmstring.aoobar.base.BaseFragment;
 import com.zzmstring.aoobar.bean.MusicInfo;
+import com.zzmstring.aoobar.bean.MyMusicInfo;
 import com.zzmstring.aoobar.fragment.SimpleFragment;
 import com.zzmstring.aoobar.openfiledemo.CallbackBundle;
 import com.zzmstring.aoobar.openfiledemo.OpenFileDialog;
@@ -82,7 +85,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     static private int openfileDialogId = 0;
     private SQLiteDatabase database;
     private SqlBrite db;
-
+    public static final int REFORSELFILE=101;
+    private SparseArray<SimpleFragment> sparseArray;
+    private HashMap<String,SimpleFragment> hashMap;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +99,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     protected void initView() {
         setContentView(R.layout.activity_main);
         ViewUtils.inject(this);
+        hashMap=new HashMap<>();
         chanelList = new ArrayList<String>();
         baseFragmentList = new ArrayList<BaseFragment>();
         database = Dao.getInstance(this).getConnection();
@@ -107,6 +113,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             database.execSQL("create table "+title+"(_id integer PRIMARY KEY AUTOINCREMENT, path char, "
                     + "file char, time integer)");
             Hawk.put("isOpen", true);
+//            hashMap.put("")
         } else {
 //            List<String> tempList=Hawk.get("list");
 //            if(!ListUtils.isEmpty(tempList)){
@@ -136,14 +143,15 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                         SimpleFragment simpleFragment = new SimpleFragment(MainActivity.this,str);
 
                         baseFragmentList.add(simpleFragment);
+                        hashMap.put(str,simpleFragment);
                     }
                     isFirst = false;
                 } else {
                     cursor.moveToLast();
                     String str = cursor.getString(1);
                     SimpleFragment simpleFragment = new SimpleFragment(MainActivity.this,str);
-
                     baseFragmentList.add(simpleFragment);
+                    hashMap.put(str,simpleFragment);
                 }
             }
         });
@@ -304,7 +312,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         String currenttabstring=tabs.getCurrent(view_pager.getCurrentItem());
         ExLog.l("当前的页面是>"+currenttabstring);
         Intent intent=new Intent(this, SelectFilesAty.class);
-        startActivity(intent);
+        startActivityForResult(intent, REFORSELFILE);
 
     }
     private void addList(){
@@ -332,20 +340,41 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 //        }
 //        super.onUserInteraction();
     }
-    private void insertMps(String table,List<MusicInfo> list){
+    private void insertMps(String table,List<MyMusicInfo> list){
         if(!ListUtils.isEmpty(list)){
-            for(MusicInfo info:list){
+            for(MyMusicInfo info:list){
+                ExLog.l("选中的文件是>>>"+info.file+"<>"+info.path);
                 db.insert(table,createMusic(info));
             }
+            SimpleFragment simpleFragment=hashMap.get(table);
+            simpleFragment.initListener();
+//            ListAdapter listAdapter=simpleFragment.getListAdapter();
+//            boolean isnull=listAdapter==null;
+//            ExLog.l("lsitadapter == null>>>"+isnull);
+//            if(listAdapter!=null){
+//                listAdapter.notifyDataSetChanged();
+//                simpleFragment.getListView().invalidate();
+//            }
         }else {
 
         }
     }
-    private ContentValues createMusic(MusicInfo info){
+    private ContentValues createMusic(MyMusicInfo info){
         ContentValues contentValues=new ContentValues();
-        contentValues.put("path",info.getPath());
-        contentValues.put("file",info.getFile());
-        contentValues.put("time",info.getTime());
+        contentValues.put("path",info.path);
+        contentValues.put("file",info.file);
+//        contentValues.put("time",info.);
         return contentValues;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case REFORSELFILE:
+                ArrayList<MyMusicInfo> list=data.getParcelableArrayListExtra("list");
+                String currenttabstring=tabs.getCurrent(view_pager.getCurrentItem());
+                insertMps(currenttabstring,list);
+                break;
+        }
     }
 }
