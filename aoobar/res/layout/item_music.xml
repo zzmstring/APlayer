@@ -1,17 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
+    android:background="#eeeeee"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <TextView
-        android:textColor="#ffffff"
+        android:textSize="18sp"
+        android:textColor="#404040"
         android:text="file"
         android:id="@+id/tv_file"
         android:singleLine="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <TextView
-        android:textColor="#ffffff"
+        android:layout_marginTop="5dp"
+        android:layout_height="wrap_content"
+        android:textColor="#878787"
+        android:text="time"
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"/>
+    <TextView
+        android:textSize="10sp"
+        android:textColor="#878787"
         android:text="path"
         android:id="@+id/tv_path"
         android:ellipsize="marquee"
@@ -19,10 +29,5 @@
         android:singleLine="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-    <TextView
-        android:textColor="#ffffff"
-        android:text="time"
-        android:id="@+id/tv_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+
 </LinearLayout>

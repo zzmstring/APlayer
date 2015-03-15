@@ -6,14 +6,15 @@
     android:layout_height="match_parent"
     >
     <LinearLayout
+        android:id="@+id/ll_1"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
         <RelativeLayout
             android:id="@+id/title_bar"
-            android:background="#303030"
+            android:background="#455a64"
             android:layout_width="match_parent"
-            android:layout_height="43dp">
+            android:layout_height="48dp">
             <ImageView
                 android:layout_alignParentLeft="true"
                 android:layout_width="wrap_content"
@@ -36,7 +37,7 @@
                 android:layout_height="wrap_content" />
             </RelativeLayout>
         <LinearLayout
-            android:background="#1a1a1a"
+            android:background="#2892d7"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -44,13 +45,13 @@
                 android:layout_weight="1"
                 android:id="@+id/tabs"
                 app:pstsShouldExpand="true"
-                app:pstsIndicatorColor="#33b5e5"
-                app:pstsDividerColor="#424242"
-                app:pstsUnderlineColor="#1a1a1a"
+                app:pstsIndicatorColor="#f4f769"
+                app:pstsDividerColor="#dbd9d7"
+                app:pstsUnderlineColor="#2892d7"
                 android:textColor="#ffffff"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
-                android:background="#1a1a1a" />
+                android:background="#2892d7" />
             <View
                 android:background="#424242"
                 android:layout_gravity="center"
@@ -59,112 +60,119 @@
             <ImageView
 
                 android:id="@+id/iv_addfragment"
-                android:background="#1a1a1a"
+                android:background="#2892d7"
                 android:layout_alignParentRight="true"
                 android:src="@drawable/arrowdown"
                 android:layout_width="wrap_content"
                 android:layout_height="43dp" />
         </LinearLayout>
-        <android.support.v4.view.ViewPager
-            android:id="@+id/view_pager"
-            android:background="#002b36"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        </android.support.v4.view.ViewPager>
+
         </LinearLayout>
+
     <LinearLayout
+        android:id="@+id/ll_2"
         android:layout_alignParentBottom="true"
-        android:id="@+id/activity_main_view_bottom"
-        android:layout_width="match_parent"
-        android:layout_height="64dip"
-        android:background="@color/main_item_bg" >
-        <LinearLayout
-            android:layout_width="0.0dip"
-            android:layout_height="match_parent"
-            android:layout_weight="1.0"
-            android:gravity="bottom"
-            android:orientation="vertical" >
-            <TextView
-                android:id="@+id/activity_main_tv_artist"
-                android:layout_width="match_parent"
-                android:layout_height="20dip"
-                android:gravity="center_vertical"
-                android:paddingLeft="3.0dip"
-                android:paddingRight="1.0dip"
-                android:singleLine="true"
-                android:textColor="@color/white"
-                android:textSize="11.0sp" />
-
-            <TextView
-                android:id="@+id/activity_main_tv_name"
-                android:layout_width="match_parent"
-                android:layout_height="20dip"
-                android:gravity="center_vertical"
-                android:paddingLeft="3.0dip"
-                android:paddingRight="1.0dip"
-                android:singleLine="true"
-                android:textColor="@color/white"
-                android:textSize="12.0sp" />
-
-            <TextView
-                android:id="@+id/activity_main_tv_time"
-                android:layout_width="match_parent"
-                android:layout_height="20dip"
-                android:gravity="center_vertical"
-                android:paddingLeft="3.0dip"
-                android:paddingRight="1.0dip"
-                android:singleLine="true"
-                android:textColor="@color/white"
-                android:textSize="11.0sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_marginBottom="2dp"
-            android:layout_width="170.0dip"
-            android:layout_height="match_parent"
-            android:gravity="center" >
-
-            <ImageButton
-                android:id="@+id/activity_main_ib_previous"
-                android:layout_width="50.0dip"
-                android:layout_height="50.0dip"
-                android:background="@drawable/btn_bg_style"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/main_btn_previous" />
-
-            <ImageButton
-                android:id="@+id/activity_main_ib_play"
-                android:layout_width="50.0dip"
-                android:layout_height="50.0dip"
-                android:layout_marginLeft="3.0dip"
-                android:layout_marginRight="3.0dip"
-                android:background="@drawable/btn_bg_style"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/main_btn_play" />
-
-            <ImageButton
-                android:id="@+id/activity_main_ib_next"
-                android:layout_width="50.0dip"
-                android:layout_height="50.0dip"
-                android:layout_marginRight="5.0dip"
-                android:background="@drawable/btn_bg_style"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/main_btn_next" />
-        </LinearLayout>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_above="@id/activity_main_view_bottom"
-        android:background="@color/main_item_bg"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="30dp">
+        android:layout_height="wrap_content">
+        <LinearLayout
+
+            android:background="#d55328"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="30dp">
 
         </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+
+            android:id="@+id/activity_main_view_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:background="#d55328" >
+
+            <LinearLayout
+                android:layout_width="0.0dip"
+                android:layout_height="match_parent"
+                android:layout_weight="1.0"
+                android:gravity="bottom"
+                android:orientation="vertical" >
+                <TextView
+                    android:id="@+id/activity_main_tv_artist"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dip"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="3.0dip"
+                    android:paddingRight="1.0dip"
+                    android:singleLine="true"
+                    android:textColor="@color/white"
+                    android:textSize="11.0sp" />
+
+                <TextView
+                    android:id="@+id/activity_main_tv_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dip"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="3.0dip"
+                    android:paddingRight="1.0dip"
+                    android:singleLine="true"
+                    android:textColor="@color/white"
+                    android:textSize="12.0sp" />
+
+                <TextView
+                    android:id="@+id/activity_main_tv_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dip"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="3.0dip"
+                    android:paddingRight="1.0dip"
+                    android:singleLine="true"
+                    android:textColor="@color/white"
+                    android:textSize="11.0sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginBottom="2dp"
+                android:layout_width="170.0dip"
+                android:layout_height="match_parent"
+                android:gravity="center" >
+
+                <ImageButton
+                    android:id="@+id/activity_main_ib_previous"
+                    android:layout_width="50.0dip"
+                    android:layout_height="50.0dip"
+                    android:background="@drawable/btn_bg_style"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/main_btn_previous" />
+
+                <ImageButton
+                    android:id="@+id/activity_main_ib_play"
+                    android:layout_width="50.0dip"
+                    android:layout_height="50.0dip"
+                    android:layout_marginLeft="3.0dip"
+                    android:layout_marginRight="3.0dip"
+                    android:background="@drawable/btn_bg_style"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/main_btn_play" />
+
+                <ImageButton
+                    android:id="@+id/activity_main_ib_next"
+                    android:layout_width="50.0dip"
+                    android:layout_height="50.0dip"
+                    android:layout_marginRight="5.0dip"
+                    android:background="@drawable/btn_bg_style"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/main_btn_next" />
+            </LinearLayout>
+        </LinearLayout>
+        </LinearLayout>
+
+
     <LinearLayout
         android:visibility="invisible"
         android:background="#303030"
         android:id="@+id/ll_menu"
-        android:layout_marginTop="43dp"
+        android:layout_marginTop="48dp"
         android:layout_alignParentRight="true"
         android:weightSum="3"
         android:orientation="vertical"
@@ -198,4 +206,12 @@
             android:layout_width="match_parent"
             android:layout_height="0dp" />
         </LinearLayout>
+    <android.support.v4.view.ViewPager
+        android:layout_below="@id/ll_1"
+        android:layout_above="@id/ll_2"
+        android:id="@+id/view_pager"
+        android:background="#eeeeee"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </android.support.v4.view.ViewPager>
 </RelativeLayout>
