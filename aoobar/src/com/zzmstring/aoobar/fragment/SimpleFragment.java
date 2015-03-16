@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -15,6 +16,7 @@ import com.zzmstring.aoobar.DB.Dao;
 import com.zzmstring.aoobar.R;
 import com.zzmstring.aoobar.adapter.ListAdapter;
 import com.zzmstring.aoobar.base.BaseFragment;
+import com.zzmstring.aoobar.bean.MyMusicInfo;
 
 /**
  * Created by zzmstring on 2015/3/6.
@@ -76,7 +78,13 @@ public class SimpleFragment extends BaseFragment implements View.OnClickListener
 
     @Override
     public void initData() {
+        lv_main.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                MyMusicInfo info= (MyMusicInfo) lv_main.getAdapter().getItem(i);
 
+            }
+        });
     }
 
     @Override

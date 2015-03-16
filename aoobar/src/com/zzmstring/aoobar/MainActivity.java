@@ -2,11 +2,17 @@ package com.zzmstring.aoobar;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
@@ -31,10 +37,12 @@ import com.zzmstring.aoobar.base.BaseFragment;
 import com.zzmstring.aoobar.bean.MusicInfo;
 import com.zzmstring.aoobar.bean.MyMusicInfo;
 import com.zzmstring.aoobar.fragment.SimpleFragment;
+import com.zzmstring.aoobar.music.MediaBinder;
 import com.zzmstring.aoobar.openfiledemo.CallbackBundle;
 import com.zzmstring.aoobar.openfiledemo.OpenFileDialog;
 import com.zzmstring.aoobar.support.hawk.Hawk;
 import com.zzmstring.aoobar.utils.ExLog;
+import com.zzmstring.aoobar.utils.FormatUtil;
 import com.zzmstring.aoobar.utils.ListUtils;
 import com.zzmstring.aoobar.view.PagerSlidingTabStrip.PagerSlidingTabStrip;
 
@@ -47,6 +55,76 @@ import rx.Observable;
 import rx.functions.Action1;
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener {
+
+    public static final int SLIDING_MENU_SCAN = 0;// 侧滑->扫描歌曲
+    public static final int SLIDING_MENU_ALL = 1;// 侧滑->全部歌曲
+    public static final int SLIDING_MENU_FAVORITE = 2;// 侧滑->我的最爱
+    public static final int SLIDING_MENU_FOLDER = 3;// 侧滑->文件夹
+    public static final int SLIDING_MENU_EXIT = 4;// 侧滑->退出程序
+    public static final int SLIDING_MENU_FOLDER_LIST = 5;// 侧滑->文件夹->文件夹列表
+
+    public static final int DIALOG_DISMISS = 0;// 对话框消失
+    public static final int DIALOG_SCAN = 1;// 扫描对话框
+    public static final int DIALOG_MENU_REMOVE = 2;// 歌曲列表移除对话框
+    public static final int DIALOG_MENU_DELETE = 3;// 歌曲列表提示删除对话框
+    public static final int DIALOG_MENU_INFO = 4;// 歌曲详情对话框
+    public static final int DIALOG_DELETE = 5;// 歌曲删除对话框
+
+    public static final String PREFERENCES_NAME = "settings";// SharedPreferences名称
+    public static final String PREFERENCES_MODE = "mode";// 存储播放模式
+    public static final String PREFERENCES_SCAN = "scan";// 存储是否扫描过
+    public static final String PREFERENCES_SKIN = "skin";// 存储背景图
+    public static final String PREFERENCES_LYRIC = "lyric";// 存储歌词高亮颜色
+
+    public static final String BROADCAST_ACTION_SCAN = "com.cwd.cmeplayer.action.scan";// 扫描广播标志
+    public static final String BROADCAST_ACTION_MENU = "com.cwd.cmeplayer.action.menu";// 弹出菜单广播标志
+    public static final String BROADCAST_ACTION_FAVORITE = "com.cwd.cmeplayer.action.favorite";// 喜爱广播标志
+    public static final String BROADCAST_ACTION_EXIT = "com.cwd.cmeplayer.action.exit";// 退出程序广播标志
+    public static final String BROADCAST_INTENT_PAGE = "com.cwd.cmeplayer.intent.page";// 页面状态
+    public static final String BROADCAST_INTENT_POSITION = "com.cwd.cmeplayer.intent.position";// 歌曲索引
+    public static final String BROADCASE_MP3PATH="com.zzmstring.aoobar.mp3path";
+    private final String TITLE_ALL = "播放列表";
+    private final String TITLE_FAVORITE = "我的最爱";
+    private final String TITLE_FOLDER = "文件夹";
+    private final String TITLE_NORMAL = "无音乐播放";
+    private final String TIME_NORMAL = "00:00";
+
+    private int skinId;// 背景图ID
+    private int slidingPage = SLIDING_MENU_ALL;// 页面状态
+    private int playerPage;// 发送给PlayerActivity的页面状态
+    private int musicPosition;// 当前播放歌曲索引
+    private int folderPosition;// 文件夹列表索引
+    private int dialogMenuPosition;// 记住弹出歌曲列表菜单的歌曲索引
+
+    private boolean canSkip = true;// 防止用户频繁点击造成多次解除服务绑定，true：允许解绑
+    private boolean bindState = false;// 服务绑定状态
+
+    private String mp3Current;// 歌曲当前时长
+    private String mp3Duration;// 歌曲总时长
+    private String dialogMenuPath;// 记住弹出歌曲列表菜单的歌曲路径
+
+    private TextView mainTitle;// 列表标题
+    private TextView mainSize;// 歌曲数量
+    private TextView mainArtist;// 艺术家
+    private TextView mainName;// 歌曲名称
+    private TextView mainTime;// 歌曲时间
+    private ImageView mainAlbum;// 专辑图片
+
+    private ImageButton btnMenu;// 侧滑菜单按钮
+    private ImageButton btnPrevious;// 上一首按钮
+    private ImageButton btnPlay;// 播放和暂停按钮
+    private ImageButton btnNext;// 下一首按钮
+
+    private LinearLayout skin;// 背景图
+    private LinearLayout viewBack;// 返回上一级
+    private LinearLayout viewControl;// 底部播放控制视图
+
+    private Intent playIntent;
+    private MediaBinder binder;
+    private MainReceiver receiver;
+
+    private SharedPreferences preferences;
+    private ServiceConnection serviceConnection;
     @ViewInject(R.id.tabs)
     PagerSlidingTabStrip tabs;
     @ViewInject(R.id.iv_addfragment)
@@ -75,7 +153,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     TextView tv_addmps;
     @ViewInject(R.id.ll_menu)
     LinearLayout ll_menu;
-    private boolean isMenuShow=false;
+    private boolean isMenuShow = false;
     private AlertDialog dialog;
     private boolean isOpen = false;
     private boolean isFirst = true;
@@ -85,9 +163,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     static private int openfileDialogId = 0;
     private SQLiteDatabase database;
     private SqlBrite db;
-    public static final int REFORSELFILE=101;
+    public static final int REFORSELFILE = 101;
     private SparseArray<SimpleFragment> sparseArray;
-    private HashMap<String,SimpleFragment> hashMap;
+    private HashMap<String, SimpleFragment> hashMap;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,7 +178,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     protected void initView() {
         setContentView(R.layout.activity_main);
         ViewUtils.inject(this);
-        hashMap=new HashMap<>();
+        hashMap = new HashMap<>();
+        initServiceConnection();
         chanelList = new ArrayList<String>();
         baseFragmentList = new ArrayList<BaseFragment>();
         database = Dao.getInstance(this).getConnection();
@@ -110,7 +190,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         if (!isOpen) {
             String title = "defaule";
             db.insert("list", createList(title));
-            database.execSQL("create table "+title+"(_id integer PRIMARY KEY AUTOINCREMENT, path char, "
+            database.execSQL("create table " + title + "(_id integer PRIMARY KEY AUTOINCREMENT, path char, "
                     + "file char, time integer)");
             Hawk.put("isOpen", true);
 //            hashMap.put("")
@@ -140,18 +220,18 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 if (isFirst) {
                     while (cursor.moveToNext()) {
                         String str = cursor.getString(1);
-                        SimpleFragment simpleFragment = new SimpleFragment(MainActivity.this,str);
+                        SimpleFragment simpleFragment = new SimpleFragment(MainActivity.this, str);
 
                         baseFragmentList.add(simpleFragment);
-                        hashMap.put(str,simpleFragment);
+                        hashMap.put(str, simpleFragment);
                     }
                     isFirst = false;
                 } else {
                     cursor.moveToLast();
                     String str = cursor.getString(1);
-                    SimpleFragment simpleFragment = new SimpleFragment(MainActivity.this,str);
+                    SimpleFragment simpleFragment = new SimpleFragment(MainActivity.this, str);
                     baseFragmentList.add(simpleFragment);
-                    hashMap.put(str,simpleFragment);
+                    hashMap.put(str, simpleFragment);
                 }
             }
         });
@@ -214,8 +294,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 String content = et_edit.getText().toString().trim();
                 if (!TextUtils.isEmpty(content)) {
 //                    SqlBrite db=SqlBrite.create(database);
-                    database.execSQL("create table "+content+"(_id integer PRIMARY KEY AUTOINCREMENT, path char, "
-                                    + "file char, time integer)");
+                    database.execSQL("create table " + content + "(_id integer PRIMARY KEY AUTOINCREMENT, path char, "
+                            + "file char, time integer)");
                     ExLog.l("创建了数据库");
                     db.insert("list", createList(content));
                     tabs.notifyDataSetChanged();
@@ -275,6 +355,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         contentValues.put("name", str);
         return contentValues;
     }
+
     private void showDialog() {
         Map<String, Integer> images = new HashMap<String, Integer>();
         // 下面几句设置各文件类型的图标， 需要你先把图标添加到资源文件夹
@@ -294,42 +375,47 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 ".mp3;",
                 images);
         dialog.show();
-        }
-    private void showMenu(){
-        if(!isMenuShow){
+    }
+
+    private void showMenu() {
+        if (!isMenuShow) {
             ll_menu.setVisibility(View.VISIBLE);
-            isMenuShow=true;
-        }else {
+            isMenuShow = true;
+        } else {
             ll_menu.setVisibility(View.INVISIBLE);
-            isMenuShow=false;
+            isMenuShow = false;
         }
     }
-    private void addMps(){
-        if(isMshow()){
+
+    private void addMps() {
+        if (isMshow()) {
             ll_menu.setVisibility(View.INVISIBLE);
-            isMenuShow=false;
+            isMenuShow = false;
         }
-        String currenttabstring=tabs.getCurrent(view_pager.getCurrentItem());
-        ExLog.l("当前的页面是>"+currenttabstring);
-        Intent intent=new Intent(this, SelectFilesAty.class);
+        String currenttabstring = tabs.getCurrent(view_pager.getCurrentItem());
+        ExLog.l("当前的页面是>" + currenttabstring);
+        Intent intent = new Intent(this, SelectFilesAty.class);
         startActivityForResult(intent, REFORSELFILE);
 
     }
-    private void addList(){
+
+    private void addList() {
         showAddTitle();
-        if(isMshow()){
+        if (isMshow()) {
             ll_menu.setVisibility(View.INVISIBLE);
-            isMenuShow=false;
+            isMenuShow = false;
         }
     }
-    private void deleteList(){
-        if(isMshow()){
+
+    private void deleteList() {
+        if (isMshow()) {
             ll_menu.setVisibility(View.INVISIBLE);
-            isMenuShow=false;
+            isMenuShow = false;
         }
     }
-    private boolean isMshow(){
-        return ll_menu.getVisibility()==View.VISIBLE?true:false;
+
+    private boolean isMshow() {
+        return ll_menu.getVisibility() == View.VISIBLE ? true : false;
     }
 
     @Override
@@ -340,13 +426,14 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 //        }
 //        super.onUserInteraction();
     }
-    private void insertMps(String table,List<MyMusicInfo> list){
-        if(!ListUtils.isEmpty(list)){
-            for(MyMusicInfo info:list){
-                ExLog.l("选中的文件是>>>"+info.file+"<>"+info.path);
-                db.insert(table,createMusic(info));
+
+    private void insertMps(String table, List<MyMusicInfo> list) {
+        if (!ListUtils.isEmpty(list)) {
+            for (MyMusicInfo info : list) {
+                ExLog.l("选中的文件是>>>" + info.file + "<>" + info.path);
+                db.insert(table, createMusic(info));
             }
-            SimpleFragment simpleFragment=hashMap.get(table);
+            SimpleFragment simpleFragment = hashMap.get(table);
             simpleFragment.initListener();
 //            ListAdapter listAdapter=simpleFragment.getListAdapter();
 //            boolean isnull=listAdapter==null;
@@ -355,26 +442,135 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 //                listAdapter.notifyDataSetChanged();
 //                simpleFragment.getListView().invalidate();
 //            }
-        }else {
+        } else {
 
         }
     }
-    private ContentValues createMusic(MyMusicInfo info){
-        ContentValues contentValues=new ContentValues();
-        contentValues.put("path",info.path);
-        contentValues.put("file",info.file);
+
+    private ContentValues createMusic(MyMusicInfo info) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("path", info.path);
+        contentValues.put("file", info.file);
 //        contentValues.put("time",info.);
         return contentValues;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode){
+        switch (requestCode) {
             case REFORSELFILE:
-                ArrayList<MyMusicInfo> list=data.getParcelableArrayListExtra("list");
-                String currenttabstring=tabs.getCurrent(view_pager.getCurrentItem());
-                insertMps(currenttabstring,list);
+                ArrayList<MyMusicInfo> list = data.getParcelableArrayListExtra("list");
+                String currenttabstring = tabs.getCurrent(view_pager.getCurrentItem());
+                insertMps(currenttabstring, list);
                 break;
         }
     }
+
+    /**
+     * 用于接收歌曲列表菜单及将歌曲标记为最爱的广播
+     */
+    private class MainReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // TODO Auto-generated method stub
+            if (intent != null) {
+                final String action = intent.getAction();
+
+                if (action.equals(BROADCAST_ACTION_EXIT)) {
+//                    exitProgram();
+                    return;
+                }
+                if(action.equals(BROADCASE_MP3PATH)){
+                    String path=intent.getStringExtra("path");
+
+                }
+                // 没有传值的就是通过播放界面标记我的最爱的，所以默认赋值上次点击播放的页面，为0则默认为全部歌曲
+//                slidingPage = intent.getIntExtra(BROADCAST_INTENT_PAGE,
+//                        playerPage == 0 ? SLIDING_MENU_ALL : playerPage);
+//                dialogMenuPosition = intent.getIntExtra(
+//                        BROADCAST_INTENT_POSITION, 0);
+//                MusicInfo info = null;
+
+
+            }
+        }
+    }
+
+    /*
+     * 初始化服务绑定
+	 */
+    private void initServiceConnection() {
+        serviceConnection = new ServiceConnection() {
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                // TODO Auto-generated method stub
+                binder = null;
+            }
+
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                // TODO Auto-generated method stub
+                binder = (MediaBinder) service;
+                if (binder != null) {
+                    canSkip = true;// 重置
+                    binder.setOnPlayStartListener(new MediaBinder.OnPlayStartListener() {
+
+                        @Override
+                        public void onStart(MusicInfo info) {
+                            // TODO Auto-generated method stub
+//                            playerPage = musicAdapter.getPage();
+//                            mainArtist.setText(info.getArtist());
+                            mainName.setText(info.getName());
+                            mp3Duration = info.getTime();
+                            if (mp3Current == null) {
+                                mainTime.setText(TIME_NORMAL + " - "
+                                        + mp3Duration);
+                            } else {
+                                mainTime.setText(mp3Current + " - "
+                                        + mp3Duration);
+                            }
+
+                        }
+                });
+                binder.setOnPlayingListener(new MediaBinder.OnPlayingListener() {
+
+                    @Override
+                    public void onPlay(int currentPosition) {
+                        // TODO Auto-generated method stub
+                        mp3Current = FormatUtil.formatTime(currentPosition);
+                        mainTime.setText(mp3Current + " - " + mp3Duration);
+                    }
+                });
+                binder.setOnPlayPauseListener(new MediaBinder.OnPlayPauseListener() {
+
+                    @Override
+                    public void onPause() {
+                        // TODO Auto-generated method stub
+                        btnPlay.setImageResource(R.drawable.main_btn_play);
+                    }
+                });
+                binder.setOnPlayCompletionListener(new MediaBinder.OnPlayCompleteListener() {
+
+                    @Override
+                    public void onPlayComplete() {
+                        // TODO Auto-generated method stub
+                        mp3Current = null;
+                    }
+                });
+                binder.setOnPlayErrorListener(new MediaBinder.OnPlayErrorListener() {
+
+                    @Override
+                    public void onPlayError() {
+                        // TODO Auto-generated method stub
+                        dialogMenuPosition = musicPosition;
+//                            removeList();// 文件已经不存在必须从列表移除
+                    }
+                });
+//                    binder.setLyricView(null, true);// 无歌词视图
+            }
+        }
+    };
+    }
+
 }

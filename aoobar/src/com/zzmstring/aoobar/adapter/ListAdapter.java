@@ -1,6 +1,7 @@
 package com.zzmstring.aoobar.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,8 @@ import android.widget.TextView;
 import com.zzmstring.aoobar.DB.DBHelper;
 import com.zzmstring.aoobar.DB.SqlBrite;
 import com.zzmstring.aoobar.R;
+import com.zzmstring.aoobar.bean.MyMusicInfo;
+import com.zzmstring.aoobar.music.MediaService;
 import com.zzmstring.aoobar.utils.ExLog;
 
 import rx.Observable;
@@ -20,10 +23,14 @@ import rx.Observable;
 public class ListAdapter extends CursorAdapter {
     private SqlBrite db;
     private Cursor cursor;
+    private Context context;
+    Intent intent;
 //    Observable<SqlBrite.Query> lists = db.createQuery("list", "SELECT * FROM list");
     public ListAdapter(Context context, Cursor c) {
         super(context, c);
+        this.context=context;
         this.cursor=c;
+        intent=new Intent(context, MediaService.class);
         changeCursor(c);
     }
 
@@ -46,15 +53,22 @@ public class ListAdapter extends CursorAdapter {
     }
 
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
+    public void bindView(View view, final Context context, Cursor cursor) {
         ViewHolder holder=(ViewHolder) view.getTag();
         String strFile=cursor.getString(cursor.getColumnIndex("file"));
-        String strPath=cursor.getString(cursor.getColumnIndex("path"));
+        final String strPath=cursor.getString(cursor.getColumnIndex("path"));
         String strTime=cursor.getString(cursor.getColumnIndex("time"));
         ExLog.l("执行了>>"+ExLog.getCurrentMethodName()+"path>"+strPath+"file>"+strFile+"time>"+strTime);
         holder.tvpath.setText(strPath);
         holder.tvfile.setText(strFile);
         holder.tvtime.setText(strTime);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                intent.putExtra("path",strPath);
+                context.startService(intent);
+            }
+        });
     }
     class ViewHolder{
         TextView tvpath;
@@ -73,4 +87,6 @@ public class ListAdapter extends CursorAdapter {
     public int getCount() {
         return super.getCount();
     }
+
+
 }
