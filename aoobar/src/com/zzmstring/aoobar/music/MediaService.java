@@ -506,6 +506,7 @@ public class MediaService extends Service {
             mediaPlayer.reset();
             mediaPlayer.setDataSource(mp3Path);
             mediaPlayer.prepareAsync();
+
             stopForeground(true);
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -541,11 +542,11 @@ public class MediaService extends Service {
         mHandler.sendEmptyMessage(MEDIA_PLAY_START);// 通知歌曲已播放
         if (lyricView != null) {
             // lyricView.clear(); 清空会把现有的lyricList也清空，内存共用了???
-            if (hasLyric) {
-                lyricView.setSentenceEntities(lyricList);
-                mHandler.sendEmptyMessageDelayed(MEDIA_PLAY_UPDATE_LYRIC,
-                        UPDATE_LYRIC_TIME);// 通知刷新歌词
-            }
+//            if (hasLyric) {
+//                lyricView.setSentenceEntities(lyricList);
+//                mHandler.sendEmptyMessageDelayed(MEDIA_PLAY_UPDATE_LYRIC,
+//                        UPDATE_LYRIC_TIME);// 通知刷新歌词
+//            }
         }
     }
 
@@ -557,12 +558,12 @@ public class MediaService extends Service {
 //        info.setMp3Duration(mp3Duration);
 //        info.setAudioSessionId(mediaPlayer.getAudioSessionId());
 //        CoverList.cover = albumUtil.scanAlbumImage(info.getPath());
-        mBinder.playStart(info);
+//        mBinder.playStart(info);
         mHandler.sendEmptyMessageDelayed(MEDIA_PLAY_UPDATE, UPDATE_UI_TIME);
 
-        final String artist = info.getArtist();
-        final String name = info.getName();
-        notification.tickerText = artist + " - " + name;
+//        final String artist = info.getArtist();
+//        final String name = info.getName();
+//        notification.tickerText = artist + " - " + name;
 //        if (CoverList.cover == null) {
 //            remoteViews.setImageViewResource(R.id.notification_item_album,
 //                    R.drawable.main_img_album);
@@ -570,9 +571,9 @@ public class MediaService extends Service {
 //            remoteViews.setImageViewBitmap(R.id.notification_item_album,
 //                    CoverList.cover);
 //        }
-        remoteViews.setTextViewText(R.id.notification_item_name, name);
-        remoteViews.setTextViewText(R.id.notification_item_artist, artist);
-        notification.contentView = remoteViews;
+//        remoteViews.setTextViewText(R.id.notification_item_name, name);
+//        remoteViews.setTextViewText(R.id.notification_item_artist, artist);
+//        notification.contentView = remoteViews;
         startForeground(1, notification);// id设为0将不会显示Notification
     }
 
@@ -653,7 +654,7 @@ public class MediaService extends Service {
      */
     private void removeAllMsg() {
         removeUpdateMsg();
-        removeUpdateLrcViewMsg();
+//        removeUpdateLrcViewMsg();
     }
 
     /**
@@ -800,7 +801,7 @@ public class MediaService extends Service {
                         break;
 
                     case MEDIA_PLAY_UPDATE_LYRIC:
-                        theService.updateLrcView();// 刷新歌词
+//                        theService.updateLrcView();// 刷新歌词
                         break;
 
                     case MEDIA_PLAY_REWIND:
