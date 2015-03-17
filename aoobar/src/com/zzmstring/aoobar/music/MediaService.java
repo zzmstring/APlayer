@@ -136,7 +136,7 @@ public class MediaService extends Service {
                 removeAllMsg();// 移除所有消息
                 mp.reset();
 //                page = MainActivity.SLIDING_MENU_ALL;
-                position = 0;
+//                position = 0;
                 File file = new File(mp3Path);
                 if (file.exists()) {
                     Toast.makeText(getApplicationContext(), "播放出错",
@@ -151,7 +151,6 @@ public class MediaService extends Service {
             }
         });
         mBinder.setOnServiceBinderListener(new MediaBinder.OnServiceBinderListener() {
-
             @Override
             public void seekBarStartTrackingTouch() {
                 // TODO Auto-generated method stub
@@ -159,7 +158,6 @@ public class MediaService extends Service {
                     removeUpdateMsg();
                 }
             }
-
             @Override
             public void seekBarStopTrackingTouch(int progress) {
                 // TODO Auto-generated method stub
@@ -168,9 +166,6 @@ public class MediaService extends Service {
                     update();
                 }
             }
-
-
-
             @Override
             public void control(int command) {
                 // TODO Auto-generated method stub
@@ -708,9 +703,7 @@ public class MediaService extends Service {
                 .getTime() - temp1;
         return new int[] { index, currentTime, temp1, temp2 };
     }
-
     private class ServicePhoneStateListener extends PhoneStateListener {
-
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
             // TODO Auto-generated method stub
@@ -720,9 +713,7 @@ public class MediaService extends Service {
             }
         }
     }
-
     private class ServiceReceiver extends BroadcastReceiver {
-
         @Override
         public void onReceive(Context context, Intent intent) {
             // TODO Auto-generated method stub

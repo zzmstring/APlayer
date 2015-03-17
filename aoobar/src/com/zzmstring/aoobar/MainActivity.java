@@ -521,8 +521,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                             // TODO Auto-generated method stub
 //                            playerPage = musicAdapter.getPage();
 //                            mainArtist.setText(info.getArtist());
-                            mainName.setText(info.getName());
-                            mp3Duration = info.getTime();
+//                            mainName.setText(info.getName());
+//                            mp3Duration = info.getTime();
                             if (mp3Current == null) {
                                 mainTime.setText(TIME_NORMAL + " - "
                                         + mp3Duration);
@@ -538,8 +538,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                     @Override
                     public void onPlay(int currentPosition) {
                         // TODO Auto-generated method stub
-                        mp3Current = FormatUtil.formatTime(currentPosition);
-                        mainTime.setText(mp3Current + " - " + mp3Duration);
+//                        mp3Current = FormatUtil.formatTime(currentPosition);
+//                        mainTime.setText(mp3Current + " - " + mp3Duration);
                     }
                 });
                 binder.setOnPlayPauseListener(new MediaBinder.OnPlayPauseListener() {
