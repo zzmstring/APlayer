@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.zzmstring.aoobar.DB.DBHelper;
 import com.zzmstring.aoobar.DB.SqlBrite;
+import com.zzmstring.aoobar.MainActivity;
 import com.zzmstring.aoobar.R;
 import com.zzmstring.aoobar.bean.MyMusicInfo;
 import com.zzmstring.aoobar.music.MediaService;
@@ -24,13 +25,13 @@ public class ListAdapter extends CursorAdapter {
     private SqlBrite db;
     private Cursor cursor;
     private Context context;
-    Intent intent;
+
 //    Observable<SqlBrite.Query> lists = db.createQuery("list", "SELECT * FROM list");
     public ListAdapter(Context context, Cursor c) {
         super(context, c);
         this.context=context;
         this.cursor=c;
-        intent=new Intent(context, MediaService.class);
+
         changeCursor(c);
     }
 
@@ -65,6 +66,8 @@ public class ListAdapter extends CursorAdapter {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent=((MainActivity)context).getPlayIntent();
+
                 intent.putExtra("path",strPath);
                 context.startService(intent);
             }

@@ -38,6 +38,7 @@ import com.zzmstring.aoobar.bean.MusicInfo;
 import com.zzmstring.aoobar.bean.MyMusicInfo;
 import com.zzmstring.aoobar.fragment.SimpleFragment;
 import com.zzmstring.aoobar.music.MediaBinder;
+import com.zzmstring.aoobar.music.MediaService;
 import com.zzmstring.aoobar.openfiledemo.CallbackBundle;
 import com.zzmstring.aoobar.openfiledemo.OpenFileDialog;
 import com.zzmstring.aoobar.support.hawk.Hawk;
@@ -168,6 +169,17 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private HashMap<String, SimpleFragment> hashMap;
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        hashMap = new HashMap<>();
+        chanelList = new ArrayList<String>();
+        baseFragmentList = new ArrayList<BaseFragment>();
+        database = Dao.getInstance(this).getConnection();
+    }
+    public Intent getPlayIntent(){
+        return this.playIntent;
+    }
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initView();
@@ -176,14 +188,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
     protected void initView() {
+        playIntent = new Intent(getApplicationContext(), MediaService.class);
         setContentView(R.layout.activity_main);
         ViewUtils.inject(this);
-        hashMap = new HashMap<>();
         initServiceConnection();
-        chanelList = new ArrayList<String>();
-        baseFragmentList = new ArrayList<BaseFragment>();
-        database = Dao.getInstance(this).getConnection();
-
         db = SqlBrite.create(new DBHelper(this));
         Hawk.init(this, "heihei");
         isOpen = Hawk.get("isOpen", false);
@@ -209,6 +217,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
     protected void initData() {
+
         Observable<SqlBrite.Query> lists = db.createQuery("list", "SELECT * FROM list");
         lists.subscribe(new Action1<SqlBrite.Query>() {
             @Override
@@ -221,7 +230,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                     while (cursor.moveToNext()) {
                         String str = cursor.getString(1);
                         SimpleFragment simpleFragment = new SimpleFragment(MainActivity.this, str);
-
                         baseFragmentList.add(simpleFragment);
                         hashMap.put(str, simpleFragment);
                     }
@@ -573,4 +581,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     };
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bindState = bindService(playIntent, serviceConnection,
+                Context.BIND_AUTO_CREATE);
+    }
 }
