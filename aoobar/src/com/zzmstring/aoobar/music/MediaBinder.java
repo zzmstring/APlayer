@@ -3,6 +3,7 @@ package com.zzmstring.aoobar.music;
 import android.os.Binder;
 
 import com.zzmstring.aoobar.bean.MusicInfo;
+import com.zzmstring.aoobar.bean.MyMusicInfo;
 
 /**
  * Created by zzmstring on 2015/3/16.
@@ -17,7 +18,7 @@ public class MediaBinder extends Binder {
 
     private OnServiceBinderListener onServiceBinderListener;
 
-    protected void playStart(MusicInfo info) {
+    protected void playStart(MyMusicInfo info) {
         if (onPlayStartListener != null) {
             onPlayStartListener.onStart(info);
         }
@@ -141,7 +142,7 @@ public class MediaBinder extends Binder {
          * @param info
          *            歌曲详细信息
          */
-        public void onStart(MusicInfo info);
+        public void onStart(MyMusicInfo info);
     }
 
     /**

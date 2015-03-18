@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.zzmstring.aoobar.MainActivity;
 import com.zzmstring.aoobar.R;
 import com.zzmstring.aoobar.bean.MusicInfo;
+import com.zzmstring.aoobar.bean.MyMusicInfo;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -67,7 +68,7 @@ public class MediaService extends Service {
     private final int MODE_RANDOM = 3;// 随即播放
     private final int UPDATE_LYRIC_TIME = 150;// 歌词更新间隔0.15秒
     private final int UPDATE_UI_TIME = 1000;// UI更新间隔1秒
-
+    private MyMusicInfo myMusicInfo;
     private MusicInfo info;// 歌曲详情
     private List<LyricItem> lyricList;// 歌词列表
     private List<Integer> positionList;// 列表当前项集合，目的记住前面所播放的所有歌曲，类似天天动听
@@ -326,9 +327,9 @@ public class MediaService extends Service {
         } else {
             if (mp3Path != null) {// 暂停原先播放重新开页面需要恢复原先的状态
                 mp3Duration = mediaPlayer.getDuration();
-                info.setMp3Duration(mp3Duration);
-//                CoverList.cover = albumUtil.scanAlbumImage(info.getPath());
-                mBinder.playStart(info);
+//                info.setMp3Duration(mp3Duration);
+                myMusicInfo.time=mp3Duration;
+                mBinder.playStart(myMusicInfo);
                 mp3Current = mediaPlayer.getCurrentPosition();
                 mBinder.playUpdate(mp3Current);
                 mBinder.playPause();

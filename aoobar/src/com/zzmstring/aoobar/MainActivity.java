@@ -525,7 +525,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                     binder.setOnPlayStartListener(new MediaBinder.OnPlayStartListener() {
 
                         @Override
-                        public void onStart(MusicInfo info) {
+                        public void onStart(MyMusicInfo info) {
                             // TODO Auto-generated method stub
 //                            playerPage = musicAdapter.getPage();
 //                            mainArtist.setText(info.getArtist());
@@ -586,5 +586,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         super.onResume();
         bindState = bindService(playIntent, serviceConnection,
                 Context.BIND_AUTO_CREATE);
+        Intent intent = new Intent(MediaService.BROADCAST_ACTION_SERVICE);
+        intent.putExtra(MediaService.INTENT_ACTIVITY,
+                MediaService.ACTIVITY_MAIN);
+        sendBroadcast(intent);
     }
 }
