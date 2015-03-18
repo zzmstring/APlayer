@@ -248,14 +248,14 @@ public class MediaService extends Service {
                 Context.MODE_PRIVATE);
         mode = preferences.getInt(MainActivity.PREFERENCES_MODE, MODE_NORMAL);// 取出上次的播放模式
 
-        notification = new Notification();// 通知栏相关
-        notification.icon = R.drawable.ic_launcher;
-        notification.flags = Notification.FLAG_NO_CLEAR;
-        notification.contentIntent = PendingIntent.getActivity(
-                getApplicationContext(), 0, new Intent(getApplicationContext(),
-                        MainActivity.class), 0);
-        remoteViews = new RemoteViews(getPackageName(),
-                R.layout.notification_item);
+//        notification = new Notification();// 通知栏相关
+//        notification.icon = R.drawable.ic_launcher;
+//        notification.flags = Notification.FLAG_NO_CLEAR;
+//        notification.contentIntent = PendingIntent.getActivity(
+//                getApplicationContext(), 0, new Intent(getApplicationContext(),
+//                        MainActivity.class), 0);
+//        remoteViews = new RemoteViews(getPackageName(),
+//                R.layout.notification_item);
 
         receiver = new ServiceReceiver();// 注册广播
         IntentFilter intentFilter = new IntentFilter();
@@ -508,7 +508,7 @@ public class MediaService extends Service {
             mediaPlayer.setDataSource(mp3Path);
             mediaPlayer.prepareAsync();
 
-            stopForeground(true);
+//            stopForeground(true);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -575,7 +575,7 @@ public class MediaService extends Service {
 //        remoteViews.setTextViewText(R.id.notification_item_name, name);
 //        remoteViews.setTextViewText(R.id.notification_item_artist, artist);
 //        notification.contentView = remoteViews;
-        startForeground(1, notification);// id设为0将不会显示Notification
+//        startForeground(1, notification);// id设为0将不会显示Notification
     }
 
     /**
@@ -597,7 +597,7 @@ public class MediaService extends Service {
         removeAllMsg();// 移除所有消息
         mediaPlayer.pause();
         mBinder.playPause();
-        stopForeground(true);
+//        stopForeground(true);
     }
 
     /**
@@ -760,10 +760,10 @@ public class MediaService extends Service {
 //                            break;
                     }
                     if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-                        notification.contentIntent = PendingIntent.getActivity(
-                                getApplicationContext(), 0, intent,
-                                PendingIntent.FLAG_UPDATE_CURRENT);
-                        startForeground(1, notification);// 该广播用于更新跳转界面，如按Home键后可以返回原来界面
+//                        notification.contentIntent = PendingIntent.getActivity(
+//                                getApplicationContext(), 0, intent,
+//                                PendingIntent.FLAG_UPDATE_CURRENT);
+//                        startForeground(1, notification);// 该广播用于更新跳转界面，如按Home键后可以返回原来界面
                     }
                 }
             }

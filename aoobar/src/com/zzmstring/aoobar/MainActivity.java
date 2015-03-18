@@ -182,6 +182,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        hashMap = new HashMap<>();
+        chanelList = new ArrayList<String>();
+        baseFragmentList = new ArrayList<BaseFragment>();
+        database = Dao.getInstance(this).getConnection();
         initView();
         initListener();
         initData();
