@@ -81,7 +81,13 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="30dp">
-
+            <SeekBar
+                android:layout_gravity="center_vertical"
+                android:id="@+id/sb_main"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </LinearLayout>
         <LinearLayout
             android:orientation="horizontal"

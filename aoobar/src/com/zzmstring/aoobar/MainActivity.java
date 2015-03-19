@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.lidroid.xutils.ViewUtils;
@@ -55,7 +56,7 @@ import java.util.Map;
 import rx.Observable;
 import rx.functions.Action1;
 
-public class MainActivity extends FragmentActivity implements View.OnClickListener {
+public class MainActivity extends FragmentActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     public static final int SLIDING_MENU_SCAN = 0;// 侧滑->扫描歌曲
     public static final int SLIDING_MENU_ALL = 1;// 侧滑->全部歌曲
@@ -154,6 +155,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     TextView tv_addmps;
     @ViewInject(R.id.ll_menu)
     LinearLayout ll_menu;
+    @ViewInject(R.id.sb_main)
+    SeekBar seekBar;
     private boolean isMenuShow = false;
     private AlertDialog dialog;
     private boolean isOpen = false;
@@ -262,7 +265,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         tv_addlist.setOnClickListener(this);
         tv_addmps.setOnClickListener(this);
         tv_deletelist.setOnClickListener(this);
-
+        seekBar.setOnSeekBarChangeListener(this);
     }
 
     @Override
@@ -478,6 +481,21 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         }
     }
 
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
+    }
+
     /**
      * 用于接收歌曲列表菜单及将歌曲标记为最爱的广播
      */
@@ -550,8 +568,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                     @Override
                     public void onPlay(int currentPosition) {
                         // TODO Auto-generated method stub
-//                        mp3Current = FormatUtil.formatTime(currentPosition);
+                        mp3Current = FormatUtil.formatTime(currentPosition);
 //                        mainTime.setText(mp3Current + " - " + mp3Duration);
+                        seekBar.setProgress(currentPosition);
                     }
                 });
                 binder.setOnPlayPauseListener(new MediaBinder.OnPlayPauseListener() {
