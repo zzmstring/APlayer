@@ -9,6 +9,7 @@ import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.zzmstring.aoobar.R;
+import com.zzmstring.aoobar.adapter.SelectFileAdapter;
 import com.zzmstring.aoobar.openfiledemo.CallbackBundle;
 
 import java.io.File;
@@ -30,13 +31,14 @@ public class MyFileSelectListView extends ListView implements AdapterView.OnItem
     private String path = "/";
     private List<Map<String, Object>> list = null;
     private int dialogid = 0;
-
+    private Context context;
     private String suffix = null;
 
     private Map<String, Integer> imagemap = null;
 
     public MyFileSelectListView(Context context, int dialogid, CallbackBundle callback, String suffix, Map<String, Integer> images) {
         super(context);
+        this.context=context;
         this.imagemap = images;
         this.suffix = suffix==null?"":suffix.toLowerCase();
         this.callback = callback;
@@ -140,7 +142,8 @@ public class MyFileSelectListView extends ListView implements AdapterView.OnItem
         }
         list.addAll(lfolders); // 先添加文件夹，确保文件夹显示在上面
         list.addAll(lfiles);	//再添加文件
-        SimpleAdapter adapter = new SimpleAdapter(getContext(), list, R.layout.filedialogitem, new String[]{"img", "name", "path"}, new int[]{R.id.filedialogitem_img, R.id.filedialogitem_name, R.id.filedialogitem_path});
+//        SimpleAdapter adapter = new SimpleAdapter(getContext(), list, R.layout.filedialogitem, new String[]{"img", "name", "path"}, new int[]{R.id.filedialogitem_img, R.id.filedialogitem_name, R.id.filedialogitem_path});
+        SelectFileAdapter adapter=new SelectFileAdapter(context,list);
         this.setAdapter(adapter);
         return files.length;
     }

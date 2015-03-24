@@ -22,10 +22,15 @@ public class SelectFileAdapter extends BaseAdapter {
     private Context context;
     private List<Map<String, Object>> list;
     Map<Integer, Boolean> isCheckMap ;
+    // 用来控制CheckBox的选中状况
+    private static HashMap<Integer,Boolean> isSelected;
+
     public SelectFileAdapter(Context context,List<Map<String, Object>> list){
         this.context=context;
         this.list=list;
         isCheckMap=  new HashMap<Integer, Boolean>();
+        isSelected = new HashMap<Integer, Boolean>();
+        initDate();
     }
     @Override
     public int getCount() {
@@ -55,7 +60,7 @@ public class SelectFileAdapter extends BaseAdapter {
             v = View.inflate(context,R.layout.filedialogitem,null);
             viewHolder.iv = (ImageView)v.findViewById(R.id.filedialogitem_img);
             viewHolder.tv_name = (TextView)v.findViewById(R.id.filedialogitem_name);
-            viewHolder.tv_path = (CheckBox)v.findViewById(R.id.filedialogitem_path);
+            viewHolder.tv_path = (TextView)v.findViewById(R.id.filedialogitem_path);
             viewHolder.ch=(CheckBox) v.findViewById(R.id.ch_haha);
             v.setTag(viewHolder);
         }
@@ -76,6 +81,8 @@ public class SelectFileAdapter extends BaseAdapter {
         {
             viewHolder.ch.setChecked(false);
         }
+
+        viewHolder.ch.setChecked(getIsSelected().get(i));
         viewHolder.ch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -99,5 +106,18 @@ public class SelectFileAdapter extends BaseAdapter {
         TextView tv_name;
         TextView tv_path;
         CheckBox ch;
+    }
+    public static HashMap<Integer,Boolean> getIsSelected() {
+        return isSelected;
+    }
+
+    public static void setIsSelected(HashMap<Integer,Boolean> isSelected) {
+        SelectFileAdapter.isSelected = isSelected;
+    }
+    // 初始化isSelected的数据
+    private void initDate(){
+        for(int i=0; i<list.size();i++) {
+            getIsSelected().put(i,false);
+        }
     }
 }
